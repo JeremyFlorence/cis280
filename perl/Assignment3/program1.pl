@@ -4,6 +4,8 @@
 # Assignment: 3 - Program 1
 # Date: 5/1/17
 
+# This program capitalizes the first character in each word of an input string
+
 use strict;
 use warnings;
 
