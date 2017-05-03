@@ -1,0 +1,9 @@
+last.more
+one
+should be printed
+another
+the next
+number 4
+three
+two
+hello

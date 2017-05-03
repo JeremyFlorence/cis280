@@ -1,0 +1,4 @@
+hello
+number 4
+should be printed
+last.
