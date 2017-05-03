@@ -1,2 +1,2 @@
-# cis280-cpp
-All of the C++ assignments I completed for CIS 280 at SUNY Potsdam
+# cis280
+All of the assignments I completed for CIS 280 at SUNY Potsdam
