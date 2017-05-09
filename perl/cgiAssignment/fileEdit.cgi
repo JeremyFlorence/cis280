@@ -9,6 +9,7 @@ print( header() );
 print( start_html( "File Editor" ) );
 
 my $filename = param( "File Name");
+my $output = param( "File Edit" );
 
 if (param) {
     if (-e $filename) {
@@ -20,16 +21,13 @@ if (param) {
                 push @lines, $line;
             }
 
-                
             print "Edit your file: ";
             fileEditForm(\@lines);
-            my @output = param('File Edit');
-
+            
             open(my $fh2, '>', $filename) or die "Could not open file '$filename' $!";
+            print $fh2 $output;
 
-            foreach my $line (@output) {
-                print $fh2 $line;
-            }
+            
     } else {
         print "No file with that name exists. Please enter the name of an existing file. You entered: $filename.";
         fileNameForm();
@@ -49,7 +47,7 @@ sub fileNameForm {
 
 sub fileEditForm {
     my @lines = @{$_[0]};
-    print( start_form(), textarea( -name => 'File Edit', -default => join('', @lines), -rows=>25, -cols=>50),
+    print( start_form(), textarea( -name => "File Edit", -default => join('', @lines), -rows=>25, -cols=>50),
                         br(),
                         submit( "Save changes" ),
 			end_form() );
