@@ -1,4 +1,13 @@
 #!/usr/bin/perl
+# Names: Jeremy Florence, Christopher Tang
+# Course: CIS 280 - Perl
+# Assignment: CGI Project
+# Due: 5/10/17
+# 
+# This program allows the user to calculate what they must score on their final exam in order
+# to achieve a grade that they specify. There are 8 text fields for entering points earned in specific grade
+# categories, but it is not required to fill out all of these if there are less than 8 grading categories
+# in a class.
 
 use warnings;
 use strict;
@@ -9,18 +18,23 @@ use Scalar::Util qw(looks_like_number);
 print( header() );
 print( start_html( "Required Exam Grade" ) );
 
-my @categories = param( "categories[]" );
-my @weights = param( "weights[]" );
+print (h1 ("Required Final Exam Grade calculator"));
+print (h2 ("A tool to calculate what you need to score on your final in order to get a certain grade"));
+print "Please enter the points you have earned in each category according to your syllabus, the weight of the final exam, and your desired grade.";
+
 my @points = param( "points[]" );
 my $exam_weight = param( "exam_weight" );
 my $desired_grade = param( "desired_grade" );
 
 if (param) {
-    print "Categories: @categories", br(), " Weights: @weights", br(),  "Points: @points";
-    my $valid_form = validateForm(\@categories, \@weights, \@points, $exam_weight, $desired_grade);
+
+    # We want to make sure that use input is valid
+    my $valid_form = validateForm(\@points, $exam_weight, $desired_grade);
     if ($valid_form) {
-        print br(), "The form is valid!";
+        my $required_grade = calculateRequiredExamGrade(\@points, $exam_weight, $desired_grade);
+        print "You need a final exam grade of $required_grade in order to get a final grade of $desired_grade";
     } else {
+        # If it's not valid, reprompt them
         print br(), "Invalid input";
         CategoryScoreForm();
     }
@@ -31,41 +45,17 @@ if (param) {
 
 print( end_html() );
 
+# Form for entering earned points, exam weight, and desired grade
 sub CategoryScoreForm {
     print( start_form(),
-            "Category 1: ", textfield( -name => "categories[]" ),
-            "Category 1 weight: ", textfield( -name => "weights[]" ),
             "Category 1 points: ", textfield( -name => "points[]" ), br(),
-
-            "Category 2: ", textfield( -name => "categories[]" ),
-            "Category 2 weight: ", textfield( -name => "weights[]" ),
             "Category 2 points: ", textfield( -name => "points[]" ), br(),
-
-
-            "Category 3: ", textfield( -name => "categories[]" ),
-            "Category 3 weight: ", textfield( -name => "weights[]" ),
             "Category 3 points: ", textfield( -name => "points[]" ), br(),
-
-            "Category 4: ", textfield( -name => "categories[]" ),
-            "Category 4 weight: ", textfield( -name => "weights[]" ),
             "Category 4 points: ", textfield( -name => "points[]" ), br(),
-
-            "Category 5: ", textfield( -name => "categories[]" ),
-            "Category 5 weight: ", textfield( -name => "weights[]" ),
             "Category 5 points: ", textfield( -name => "points[]" ), br(),
-
-            "Category 6: ", textfield( -name => "categories[]" ),
-            "Category 6 weight: ", textfield( -name => "weights[]" ),
             "Category 6 points: ", textfield( -name => "points[]" ), br(),
-
-            "Category 7: ", textfield( -name => "categories[]" ),
-            "Category 7 weight: ", textfield( -name => "weights[]" ),
-            "Category 7 points: ", textfield( -name => "points[]" ), br(),
-
-            "Category 8: ", textfield( -name => "categories[]" ),           
-            "Category 8 weight: ", textfield( -name => "weights[]" ),      
+            "Category 7 points: ", textfield( -name => "points[]" ), br(),     
             "Category 8 points: ", textfield( -name => "points[]" ), br(),
-
             "Final exam weight: ", textfield( -name => "exam_weight" ),
             "Desired Grade: ", textfield( -name => "desired_grade" ),
             
@@ -74,28 +64,30 @@ sub CategoryScoreForm {
 			end_form() );
 }
 
-sub validateForm {
-    my ($categories, $weights, $points, $exam_weight, $desired_grade) = @_;
-    if (scalar @$categories != scalar @$weights || scalar @$categories != scalar @$points || scalar @$weights != scalar @$points) {
-        return 0;
+# Calculates the required final exam grade
+sub calculateRequiredExamGrade {
+    my ($points, $exam_weight, $desired_grade) = @_;
+
+    my $point_sum = 0;
+    foreach my $score (@$points) {
+        $point_sum += $score;
     }
 
-    my $weight_sum = 0;
-    foreach my $weight (@$weights) {
-        if(looks_like_number($weight)) {
-            $weight_sum += $weight;
-        } else {
+    my $required_grade = (($desired_grade - $point_sum) / $exam_weight)*100;
+    return $required_grade;
+}
+
+# Checks to see if the user input is valid
+sub validateForm {
+    my ($points, $exam_weight, $desired_grade) = @_;
+
+    if (looks_like_number($desired_grade)) {
+        if ($desired_grade > 100) {
             return 0;
         }
-    }
-
-    if ($weight_sum != 100) {
+    } else {
         return 0;
     }
 
-    return 1;
-
-
-
-    
+    return 1;    
 }
