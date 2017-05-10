@@ -1,4 +1,12 @@
 #!/usr/bin/perl
+# Names: Jeremy Florence, Christopher Tang
+# Course: CIS 280 - Perl
+# Assignment: CGI Project
+# Due: 5/10/17
+# 
+# This program allows a user to enter their courses for a semester, the credits for those courses,
+# and the grades they expect to earn for those courses (on the 4.0 scale), and will calculate the
+# cumulative gpa they will have with those grades.
 
 use warnings;
 use strict;
