@@ -4,18 +4,26 @@ use warnings;
 use strict;
 use CGI::Carp qw(warningsToBrowser fatalsToBrowser);
 use CGI qw( :standard );
+use Scalar::Util qw(looks_like_number);
 
 print( header() );
 print( start_html( "Required Exam Grade" ) );
 
 my @categories = param( "categories[]" );
 my @weights = param( "weights[]" );
-my $exam_weight = param( "exam_weight" );
 my @points = param( "points[]" );
+my $exam_weight = param( "exam_weight" );
 my $desired_grade = param( "desired_grade" );
 
 if (param) {
     print "Categories: @categories", br(), " Weights: @weights", br(),  "Points: @points";
+    my $valid_form = validateForm(\@categories, \@weights, \@points, $exam_weight, $desired_grade);
+    if ($valid_form) {
+        print br(), "The form is valid!";
+    } else {
+        print br(), "Invalid input";
+        CategoryScoreForm();
+    }
 
 } else {
     CategoryScoreForm();
@@ -64,4 +72,30 @@ sub CategoryScoreForm {
 
 			br(), submit( "Calculate" ),
 			end_form() );
+}
+
+sub validateForm {
+    my ($categories, $weights, $points, $exam_weight, $desired_grade) = @_;
+    if (scalar @$categories != scalar @$weights || scalar @$categories != scalar @$points || scalar @$weights != scalar @$points) {
+        return 0;
+    }
+
+    my $weight_sum = 0;
+    foreach my $weight (@$weights) {
+        if(looks_like_number($weight)) {
+            $weight_sum += $weight;
+        } else {
+            return 0;
+        }
+    }
+
+    if ($weight_sum != 100) {
+        return 0;
+    }
+
+    return 1;
+
+
+
+    
 }
